@@ -1,156 +1,142 @@
 import 'package:flutter/material.dart';
 
 import '../../components/custom_app_bar.dart';
-import '../../theme.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(micon: Icons.home),
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 30),
-              _buildProfilePic(),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      Text('어깨 넓은 보통 체형', style: textTheme().headlineSmall),
-                      Text('어깨 넓은 보통 체형', style: textTheme().headlineSmall),
-                      Text('어깨 넓은 보통 체형', style: textTheme().headlineSmall),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              _buildProfileButton(),
-              const SizedBox(height: 20),
-              DefaultTabController(
-                length: 3,
-                child: Column(
-                  children: [
-                    TabBar(
-                      tabs: [
-                        Tab(
-                          icon: Icon(Icons.grid_on),
-                        ),
-                        Tab(
-                          icon: Icon(Icons.meeting_room),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    TabBarView(
-                      children: [
-                        GridView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisSpacing: 2,
-                            crossAxisCount: 1,
-                            mainAxisSpacing: 2,
-                          ),
-                          itemCount: 42,
-                          itemBuilder: (context, index) {
-                            return AspectRatio(
-                              aspectRatio: 2 / 1,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.network(
-                                    "https://picsum.photos/id/${index + 1}/400/400",
-                                    fit: BoxFit.cover),
-                              ),
-                            );
-                          },
-                        ),
-                        GridView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisSpacing: 2,
-                            crossAxisCount: 1,
-                            mainAxisSpacing: 2,
-                          ),
-                          itemCount: 42,
-                          itemBuilder: (context, index) {
-                            return AspectRatio(
-                              aspectRatio: 2 / 1,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.network(
-                                    "https://picsum.photos/id/${index + 1}/400/400",
-                                    fit: BoxFit.cover),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: CustomAppBar(micon: Icons.home),
+        body: MyPageBody(),
       ),
     );
   }
+}
 
-  Widget _buildProfilePic() {
-    return Row(
-      children: [
-        SizedBox(
-          width: 65,
-          height: 65,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(32.5),
-            child: Image.network(
-              'https://picsum.photos/200/100', // :TODO 04 사진수정
-              fit: BoxFit.cover,
+class MyPageBody extends StatelessWidget {
+  const MyPageBody({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return NestedScrollView(
+      headerSliverBuilder: (context, innerBoxIsScrolled) {
+        return [
+          SliverPersistentHeader(delegate: TabBarDelegate(), pinned: true)
+        ];
+      },
+      body: TabBarView(
+        children: [
+          ScreenA(),
+          GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisSpacing: 2,
+              crossAxisCount: 1,
+              mainAxisSpacing: 2,
             ),
+            itemCount: 42,
+            itemBuilder: (context, index) {
+              return AspectRatio(
+                aspectRatio: 2 / 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                      "https://picsum.photos/id/${index + 1}/400/400",
+                      fit: BoxFit.cover),
+                ),
+              );
+            },
+          ),
+          GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisSpacing: 2,
+              crossAxisCount: 1,
+              mainAxisSpacing: 2,
+            ),
+            itemCount: 42,
+            itemBuilder: (context, index) {
+              return AspectRatio(
+                aspectRatio: 2 / 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image.network(
+                      "https://picsum.photos/id/${index + 1}/400/400",
+                      fit: BoxFit.cover),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ScreenA extends StatelessWidget {
+  const ScreenA({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Container(
+            height: 300,
+            color: Colors.greenAccent,
           ),
         ),
-        SizedBox(width: 16),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('회원 이름', style: textTheme().displayMedium), // :TODO 04수정
-            Text('180cm • 70kg • 직장인',
-                style: textTheme().bodyMedium), // :TODO 04수정
-          ],
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            childCount: 40,
+            (context, index) {
+              return Container(
+                height: 40,
+                // 보는 재미를 위해 인덱스에 아무 숫자나 곱한 뒤 255로
+                // 나눠 다른 색이 보이도록 함.
+                color: Color.fromRGBO(
+                    (index * 45) % 255, (index * 70) % 255, (index * 25), 1.0),
+              );
+            },
+          ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildProfileButton() {
-    return InkWell(
-      hoverColor: Colors.black,
-      onTap: () {},
-      child: Container(
-        width: 400,
-        height: 30,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(),
+class TabBarDelegate extends SliverPersistentHeaderDelegate {
+  const TabBarDelegate();
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return TabBar(
+      tabs: [
+        Tab(
+          icon: Icon(Icons.grid_on),
         ),
-        child: Align(
-          child: Text(
-            '프로필 설정', // :TODO 04수정 (오타)
-            style: textTheme().titleMedium, // :TODO 04수정
-          ),
-        ),
-      ),
+        Tab(
+          icon: Icon(Icons.meeting_room),
+        )
+      ],
     );
+  }
+
+  @override
+  double get maxExtent => 48;
+
+  @override
+  double get minExtent => 48;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
 }
